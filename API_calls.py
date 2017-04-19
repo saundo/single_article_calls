@@ -17,7 +17,8 @@ keen = KeenClient(project_id=projectID, read_key=readKey)
 
 
 def page_views_call(article_id, start, end):
-    """return page views over time range, grouped by article ids
+    """return page views over time range,
+    group_by: device, continent, raw referrer
     """
     event = 'read_article' 
 
@@ -45,6 +46,42 @@ def page_views_call(article_id, start, end):
                       timeframe=timeframe,
                       group_by=group_by,
                       filters=filters)
+
+    print(start, end, datetime.now() - t)
+    return data
+
+def uniques_call(article_id, start, end):
+    """return uniques over time range,
+    group_by: device, continent, raw referrer
+    """
+    event = 'read_article' 
+    target_property = 'user.cookie.permanent.id'
+    
+    timeframe = {'start':start, 'end':end}
+
+    group_by = ('glass.device', 'user.geolocation.continent',
+                'raw_original_referrer')
+
+    property_name1 = 'read.type'
+    operator1 = 'eq'
+    property_value1 = 'start'
+
+    property_name2 = 'article.id'
+    operator2 = 'eq'
+    property_value2 = article_id
+    
+    filters = [{"property_name":property_name1, "operator":operator1,
+                "property_value":property_value1},
+               {"property_name":property_name2, "operator":operator2,
+                "property_value":property_value2}]
+
+    t = datetime.now()
+
+    data = keen.count_unique(event,
+                             target_property=target_property,
+                             timeframe=timeframe,
+                             group_by=group_by,
+                             filters=filters)
 
     print(start, end, datetime.now() - t)
     return data

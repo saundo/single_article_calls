@@ -9,6 +9,7 @@ from thread_module import run_thread
 from thread_module import read_data
 
 from API_calls import page_views_call
+from API_calls import uniques_call
 
 def refer_categorize(x):
     """categorizes the raw_original_referrer return; NOT EXHAUSTIVE
@@ -54,4 +55,24 @@ def page_views(article_id, timeframe, dump_dir):
 
     return df_refer, df_geo
     
+    
+def uniques(article_id, timeframe, dump_dir):
+    """returns number of unique visitors (read article starts) 
+     over the specified timeframe
+    returns two DataFrames:
+    - df_refer_un: uniques by referrer
+    - df_geo_un: uniques by geography
+    """
+    run_thread(uniques_call, article_id, timeframe, dump_dir)
+    df = read_data(dump_dir)
+    df['refer'] = df['raw_original_referrer'].apply(refer_categorize)
+    
+    df_refer_un = df.pivot_table(values='result', index='refer',
+                              columns='glass.device', aggfunc='sum')
+    df_geo_un = df.pivot_table(values='result',
+                            index='user.geolocation.continent',
+                            columns='glass.device', aggfunc='sum')
+
+    return df_refer_un, df_geo_un
+
     
