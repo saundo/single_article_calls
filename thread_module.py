@@ -17,11 +17,11 @@ class DownloadWorker(Thread):
         
     def run(self):
         while True:
-            func, start, end, dump_dir = self.queue.get()
-            pump_and_dump(func, start, end, dump_dir)
+            func, article_id, start, end, dump_dir = self.queue.get()
+            pump_and_dump(func, article_id, start, end, dump_dir)
             self.queue.task_done()
 
-def run_thread(func, timeframe, dump_dir):
+def run_thread(func, article_id, timeframe, dump_dir):
     """func - the API call to run 
     timeframe - needs to be a tuple of start, end; 
     dump_dir - where to temp store the data
@@ -43,15 +43,15 @@ def run_thread(func, timeframe, dump_dir):
         worker.start()
     
     for start, end in timeframe:
-        queue.put((func, start, end, dump_dir))
+        queue.put((func, article_id, start, end, dump_dir))
 
     queue.join()
 
-def pump_and_dump(func, start, end, dump_dir):
+def pump_and_dump(func, article_id, start, end, dump_dir):
     """makes a KEEN API call, and then saves the file to the given dump_dir
     """
     
-    data = func(start, end)
+    data = func(article_id, start, end)
     
     dump_dir = dump_dir
     ref = start[:16] + '--' + end[:16] + '--' + 'threadtemp'
