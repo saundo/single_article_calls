@@ -10,6 +10,7 @@ from thread_module import read_data
 
 from API_calls import page_views_call
 from API_calls import uniques_call
+from API_calls import unique_time_call
 
 def refer_categorize(x):
     """categorizes the raw_original_referrer return; NOT EXHAUSTIVE
@@ -57,8 +58,8 @@ def page_views(article_id, timeframe, dump_dir):
     
     
 def uniques(article_id, timeframe, dump_dir):
-    """returns number of unique visitors (read article starts) 
-     over the specified timeframe
+    """returns number of unique visitors for page views (read article starts) 
+    over the specified timeframe
     returns two DataFrames:
     - df_refer_un: uniques by referrer
     - df_geo_un: uniques by geography
@@ -75,4 +76,11 @@ def uniques(article_id, timeframe, dump_dir):
 
     return df_refer_un, df_geo_un
 
+def unique_time(article_id, timeframe, dump_dir):
+    """
+    """
+    run_thread(unique_time_call, article_id, timeframe, dump_dir)
+    df = read_data(dump_dir)
+    
+    return df
     

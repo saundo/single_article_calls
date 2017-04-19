@@ -85,3 +85,45 @@ def uniques_call(article_id, start, end):
 
     print(start, end, datetime.now() - t)
     return data
+
+def unique_time_call(article_id, start, end):
+    """return sum of incremental time, grouped by cookie ids
+    """
+    event = 'read_article' 
+    target_property = 'read.time.incremental.seconds'
+
+    timeframe = {'start':start, 'end':end}
+
+    group_by = 'user.cookie.permanent.id'
+
+    property_name1 = 'article.id'
+    operator1 = 'eq'
+    property_value1 = article_id
+
+    property_name2 = 'read.type'
+    operator2 = 'in'
+    property_value2 = [25, 50, 75, 'complete', 'tap_read_full_story']
+
+    property_name3 = 'read.time.incremental.seconds'
+    operator3 = 'gt'
+    property_value3 = 0.5
+    
+    property_name4 = 'read.time.incremental.seconds'
+    operator4 = 'lt'
+    property_value4 = 400
+
+    filters = [{"property_name":property_name1, "operator":operator1, "property_value":property_value1},
+               {"property_name":property_name2, "operator":operator2, "property_value":property_value2},
+               {"property_name":property_name3, "operator":operator3, "property_value":property_value3},
+               {"property_name":property_name4, "operator":operator4, "property_value":property_value4}]
+
+    t = datetime.now()
+
+    data = keen.sum(event,
+                    target_property=target_property,
+                    timeframe=timeframe,
+                    group_by=group_by,
+                    filters=filters)
+
+    print(start, end, datetime.now() - t)
+    return data
