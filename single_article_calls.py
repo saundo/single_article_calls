@@ -77,7 +77,9 @@ def uniques(article_id, timeframe, dump_dir):
     return df_refer_un, df_geo_un
 
 def unique_time(article_id, timeframe, dump_dir):
-    """
+    """returns DataFrame of cookie ids and the amount of time (s) spent
+    on the article id; cookie's are currently ungrouped, so duplicates 
+    potentially exist
     """
     run_thread(unique_time_call, article_id, timeframe, dump_dir)
     df = read_data(dump_dir)
