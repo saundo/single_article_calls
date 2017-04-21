@@ -127,3 +127,35 @@ def unique_time_call(article_id, start, end):
 
     print(start, end, datetime.now() - t)
     return data
+
+def section_time_call(article_id, start, end):
+    """return the incremental read times by article section
+    
+    """
+    event = 'read_article'
+
+    timeframe = {'start':start, 'end':end}
+
+    group_by = ('read.time.incremental.seconds', 'read.type', 'glass.device')
+
+    property_name1 = 'article.id'
+    operator1 = 'eq'
+    property_value1 = article_id
+    
+    property_name2 = 'read.type'
+    operator2 = 'in'
+    property_value2 = [25, 50, 75, 'complete', 'article_exits_viewport']
+
+    filters = [{"property_name":property_name1, "operator":operator1,
+                "property_value":property_value1},
+               {"property_name":property_name2, "operator":operator2,
+                "property_value":property_value2}]
+
+    t = datetime.now()
+    data = keen.count(event, 
+                      timeframe=timeframe,
+                      group_by=group_by, 
+                      filters=filters)
+    print(start, end, datetime.now() - t)
+    
+    return data

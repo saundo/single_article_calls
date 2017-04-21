@@ -4,6 +4,7 @@
 single_article calls primary
 """
 
+import numpy as np
 import pandas as pd
 from thread_module import run_thread
 from thread_module import read_data
@@ -11,6 +12,7 @@ from thread_module import read_data
 from API_calls import page_views_call
 from API_calls import uniques_call
 from API_calls import unique_time_call
+from API_calls import section_time_call
 
 def refer_categorize(x):
     """categorizes the raw_original_referrer return; NOT EXHAUSTIVE
@@ -85,4 +87,14 @@ def unique_time(article_id, timeframe, dump_dir):
     df = read_data(dump_dir)
     
     return df
+
+def section_time(article_id, timeframe, dump_dir):
+    """outputs the time spent by article sections
+    25, 50, 75, complete, article exits viewport
+    """
+    run_thread(section_time_call, article_id, timeframe, dump_dir)
+    df = read_data(dump_dir)
+    
+    return df
+    
     
